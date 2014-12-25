@@ -1,0 +1,18 @@
+---
+abstract: 'Load warnings from a specific version of perl'
+author:
+  - 'Andreas Guldstrand <andreas.guldstrand@gmail.com>'
+build_requires:
+  Test::More: '0.96'
+configure_requires:
+  ExtUtils::MakeMaker: '0'
+dynamic_config: 0
+generated_by: 'Dist::Zilla version 5.029, CPAN::Meta::Converter version 2.143240'
+license: mit
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: '1.4'
+name: Warnings-Version
+requires:
+  Import::Into: '0'
+version: '0.001'
