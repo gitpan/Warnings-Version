@@ -72,7 +72,20 @@ sub intersection {
 
 
 1;
+
 __END__
+
+=pod
+
+=encoding UTF-8
+
+=head1 NAME
+
+Warnings::Version - Load warnings from a specific version of perl
+
+=head1 VERSION
+
+version 0.001001
 
 =head1 SYNOPSIS
 
@@ -100,3 +113,17 @@ running with, as well as the perl you wrote the module for. It is meant for modu
 don't want to get tonnes of emails and bugreports when someone upgrades their perl version and your code starts emitting warnings. Of
 course you should still keep up to date with deprecations and perl's experiments so your code doesn't break when there's been actual
 changes in how things work, but with this module, at least your B<users> don't need to worry about that too.
+
+=head1 AUTHOR
+
+Andreas Guldstrand <andreas.guldstrand@gmail.com>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is Copyright (c) 2014 by Andreas Guldstrand.
+
+This is free software, licensed under:
+
+  The MIT (X11) License
+
+=cut

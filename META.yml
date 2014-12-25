@@ -15,4 +15,4 @@ meta-spec:
 name: Warnings-Version
 requires:
   Import::Into: '0'
-version: '0.001'
+version: '0.001001'
