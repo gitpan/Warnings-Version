@@ -22,7 +22,11 @@ my $perl_interp  = $^X;
 my $perl_version = Warnings::Version::massage_version($]);
 
 my %warnings = (
-    closure   => qr/^(Variable "\$foo" may be unavailable|Variable "\$foo" will not stay shared)/,
+    closure   => qr/^(
+        \QVariable "\E\$\Qfoo" may be unavailable\E
+            |
+        \QVariable "\E\$\Qfoo" will not stay shared\E
+        )/x,
     exiting   => qr/^\QExiting eval via last/,
     io        => qr/^Filehandle (main::)?STDIN opened only for input/,
     glob      => "Not sure how to cause a glob category warning",
@@ -30,7 +34,10 @@ my %warnings = (
     exec      => qr/^\QStatement unlikely to be reached/,
     newline   => qr/^\QUnsuccessful stat on filename containing newline/,
     pipe      => qr/^\QMissing command in piped open/,
-    unopened  => qr/^(\Qclose() on unopened filehandle FOO\E|\QClose on unopened file <FOO>\E)/,
+    unopened  => qr/^(
+        \Qclose() on unopened filehandle FOO\E
+            |
+        \QClose on unopened file <FOO>\E)/x,
     misc      => qr/^\QOdd number of elements in hash assignment/,
     numeric   => qr/^\QArgument "foo" isn't numeric in repeat (x)/,
     once      => qr/^\QName "main::foo" used only once: possible typo/,
@@ -40,7 +47,8 @@ my %warnings = (
     recursion => qr/^\QDeep recursion on subroutine "main::foo"/,
     redefine  => qr/^\QSubroutine foo redefined/,
     regexp    => qr!^(
-        \QFalse [] range "a-\d" in regex; marked by <-- HERE in m/[a-\d <-- HERE ]/\E
+        \QFalse [] range "a-\d" in regex; marked by <-- HERE in m/[a-\d <-- \E
+        \QHERE ]/\E
               |
         \Q/[a-\d]/: false [] range "a-\d" in regexp\E
               |
@@ -50,45 +58,64 @@ my %warnings = (
     inplace   => qr/^Can't open .*nonexistant: /,
     internal  => "Not sure how to cause an internal warning",
     malloc    => "Not sure how to cause a malloc warning",
-    signal    => qr/\QNo such signal: SIGFOOBAR/,
+    signal    => qr/^\QNo such signal: SIGFOOBAR/,
+    substr    => qr/^\Qsubstr outside of string\E/,
+    syntax    => qr/^\QFound = in conditional, should be ==\E/,
+    ambiguous => qr/^
+        \QAmbiguous call resolved as CORE::log(), qualify as such or use &\E
+        /x,
+    bareword  => qr/^\QBareword found in conditional/,
+    deprecated => qr/^\Qdefined(\E\@\Qarray) is deprecated\E/,
+    digit     => qr/^\QIllegal octal digit '8'\E/, # Since this causes an error
+        # we'll clobber it:
+    digit     => "Digit warnings seem to be fatal errors rather than warnings",
+    parenthesis => qr/^\QParentheses missing around "my" list\E/,
+    precedence => qr/^\QPrecedence problem: open FOO should be open(FOO)\E/,
+    printf    => qr/^\QInvalid conversion in sprintf: "%A"\E/,
+    prototype => qr/^\Qmain::foo() called too early to check prototype\E/,
+    qw        => qr/^\QPossible attempt to put comments in qw() list\E/,
+    reserved  => qr/^
+        \QUnquoted string "bar" may clash with future reserved word\E
+        /x,
+    semicolon => "Only warns when there's an error anyway",
+    taint     => qr/^
+        \QInsecure dependency in kill while running with -T switch\E
+        /x,
+    uninitialized => qr/^
+        \QUse of uninitialized value\E(\ \$foo)?\Q in numeric eq (==)\E
+        /x,
+    unpack    => qr/^(
+        \QInvalid type ',' in unpack\E
+            |
+        \QInvalid type in unpack: ','\E
+        )/x,
+    untie     => qr/^\Quntie attempted while 1 inner references still exist\E/,
+    void      => qr/^(
+        \QUseless use of a constant ("foo") in void context\E
+            |
+        \QUseless use of a constant in void context\E
+            |
+        \QUseless use of a constant (foo) in void context\E
+        )/x,
+    utf8      => qr/^\QMalformed UTF-8 character/,
 );
 
 my @warnings = Warnings::Version::get_warnings('all', 'all');
-foreach my $warning (@warnings) {
-    SKIP: {
-        skip "Warning $warning not implemented", 1 unless exists $warnings{$warning};
-        skip $warnings{$warning}, 1                unless ref $warnings{$warning} eq 'Regexp';
+check_warnings(@warnings);
 
-        like( get_warning("10-helpers/$warning.pl"), $warnings{$warning}, "$warning warnings works ($^X)" );
-    };
+sub check_warnings {
+    foreach my $warning (@_) {
+        SKIP: {
+            skip "Warning $warning not implemented", 1 unless exists
+                                                       $warnings{$warning};
+            skip $warnings{$warning}, 1 unless ref $warnings{$warning}
+                                                               eq 'Regexp';
+
+            like( get_warning("10-helpers/$warning.pl"),
+                $warnings{$warning}, "$warning warnings works ($^X)" );
+        };
+    }
 }
-
-
-SKIP: {
-    skip "Chmod and umask warning categories only exist on perl 5.6", 2 unless $perl_version eq '5.6';
-
-    like( get_warning('10-helpers/version-5.006-chmod.pl'), qr/^\Qchmod() mode argument is missing initial 0/, 'chmod warning works' );
-    like( get_warning('10-helpers/version-5.006-umask.pl'), qr/^\Qumask: argument is missing initial 0/, 'umask warning works' );
-};
-
-SKIP: {
-    skip "Y2K warnings only exist on perls 5.6 and 5.8", 1                        unless grep { $perl_version eq $_ } qw/ 5.6 5.8 /;
-    skip "Only run this test if perl has been built with Y2K warnings enabled", 1 unless $Config{ccflags} =~ /Y2KWARN/;
-
-    like( get_warning('10-helpers/y2k.pl'), qr/^\QPossible Y2K bug: about to append an integer to '19'/, 'y2k warning works' );
-};
-
-SKIP: {
-    skip "There are no utf8 warnings on perls 5.14 or 5.16", 1, if grep { $perl_version eq $_ } qw/ 5.14 5.16 /;
-
-    like( get_warning('10-helpers/utf8.pl'), qr/^\QMalformed UTF-8 character/, 'utf8 warning works' );
-};
-
-SKIP: {
-    skip "Layer warning category doesn't exist on perl 5.6", 1 if $perl_version eq '5.6';
-
-    like( get_warning('10-helpers/layer.pl'), qr/^(perlio: a|A)rgument list not closed for (PerlIO )?layer "encoding\(UTF-8"/, 'layer warning works' );
-};
 
 sub get_warning {
     my $script = "$prefix/$_[0]";

@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-
+use 5.006;
 
 use ExtUtils::MakeMaker;
 
@@ -18,6 +18,7 @@ my %WriteMakefileArgs = (
   "DISTNAME" => "Warnings-Version",
   "EXE_FILES" => [],
   "LICENSE" => "mit",
+  "MIN_PERL_VERSION" => "5.006",
   "NAME" => "Warnings::Version",
   "PREREQ_PM" => {
     "Import::Into" => 0
@@ -25,7 +26,7 @@ my %WriteMakefileArgs = (
   "TEST_REQUIRES" => {
     "Test::More" => "0.96"
   },
-  "VERSION" => "0.001001",
+  "VERSION" => "0.002",
   "test" => {
     "TESTS" => "t/*.t"
   }
