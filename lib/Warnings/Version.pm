@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 package Warnings::Version;
-$Warnings::Version::VERSION = '0.002';
+$Warnings::Version::VERSION = '0.002001';
 # ABSTRACT: Load warnings from a specific version of perl
 
 use 5.006;
@@ -93,7 +93,7 @@ Warnings::Version - Load warnings from a specific version of perl
 
 =head1 VERSION
 
-version 0.002
+version 0.002001
 
 =head1 SYNOPSIS
 
@@ -111,12 +111,6 @@ version 0.002
       # perl will be enabled.
       #   For example, on perl 5.8 this will mean all 5.8 warnings except 'y2k'
       #   warnings.
-
-  use Warnings::Version '5.14';
-      # All warnings that exist on both perl 5.14 and your running version of
-      # perl will be enabled.
-      #   For example, on perl 5.8 this will mean all 5.8 warnings except 'y2k'
-      #   and 'utf8' warnings.
 
   use Warnings::Version 'all';
       # This special warning category gives you only the warnings that are on
@@ -141,7 +135,11 @@ too.
 
 =head1 SEE ALSO
 
+=over
+
 =item * The core L<warnings> module.
+
+=back
 
 =head1 BUGS
 
