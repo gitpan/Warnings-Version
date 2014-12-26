@@ -5,6 +5,7 @@ MANIFEST
 META.yml
 Makefile.PL
 README
+TODO
 dist.ini
 lib/Warnings/Version.pm
 t/01-basic.t

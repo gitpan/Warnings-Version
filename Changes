@@ -1,3 +1,6 @@
+Warnings-Version-0.002002  2014-12-26
+  Skip failing imprecision test when compiled with -Duselongdouble
+
 Warnings-Version-0.002001  2014-12-26
   POD fixups
 
