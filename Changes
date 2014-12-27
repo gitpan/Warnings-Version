@@ -1,3 +1,7 @@
+Warnings-Version-0.002003  2014-12-27
+  Fix failing imprecision test on windows, and taint test when prerequisites
+     are in PERL5LIB or PERLLIB
+
 Warnings-Version-0.002002  2014-12-26
   Skip failing imprecision test when compiled with -Duselongdouble
 

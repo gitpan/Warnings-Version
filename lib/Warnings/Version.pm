@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 package Warnings::Version;
-$Warnings::Version::VERSION = '0.002002';
+$Warnings::Version::VERSION = '0.002003';
 # ABSTRACT: Load warnings from a specific version of perl
 
 use 5.006;
@@ -93,7 +93,7 @@ Warnings::Version - Load warnings from a specific version of perl
 
 =head1 VERSION
 
-version 0.002002
+version 0.002003
 
 =head1 SYNOPSIS
 
